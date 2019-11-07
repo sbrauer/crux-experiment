@@ -73,7 +73,8 @@
      :full-results? true}))
 
 (comment
-  ;; Sample repl session where LMDB works great but Rocks seems to be missing data after reconnecting...
+  ;; Sample repl session where data seems to be missing when reconnecting to a node using Rocks
+  ;; (whereas LMDB seems fine; the opposite of what I see running the tests)
 
 crux-test> (def uuid1 (java.util.UUID/randomUUID))
 #'crux-test/uuid1
@@ -110,6 +111,8 @@ crux-test>
 crux-test> (full-query lnode)
 #{[{:crux.db/id :foo, :stuff 123}]}
 crux-test>
+crux-test> (. lnode close)
+nil
 crux-test>
 crux-test> (def uuid2 (java.util.UUID/randomUUID))
 #'crux-test/uuid2
@@ -147,7 +150,7 @@ crux-test> (def rnode (start-node uuid2 true))
 #'crux-test/rnode
 crux-test>
 crux-test> (full-query rnode)
-#{}
+#{}  ;; I expected to see my document in the set, but instead I get an empty set.
 crux-test> (. rnode close)
 nil
 crux-test>
